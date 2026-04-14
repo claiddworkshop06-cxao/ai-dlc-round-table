@@ -1,11 +1,71 @@
 # INT-000 Units Plan
 
-> Purpose: Procedure (with checkboxes) to decompose user story groups into Units (work units that can be developed in parallel)
+## Unit分割方針
 
-- [ ] Review story list (`aidlc-docs/story-artifacts/`)
-- [ ] Organize dependencies and boundaries (what to include in the same Unit)
-- [ ] List Unit candidates and briefly describe purpose/scope of each
-- [ ] Assign user stories to each Unit
-- [ ] Confirm parallel execution feasibility between Units
-- [ ] Human reviews and reflects corrections
+PoCとしてスピーディに実装することを優先し、機能の依存関係に沿って3つのUnitに分割する。
+各Unitは前のUnitに依存するため、順次実施する（直列実行）。
 
+---
+
+## UNIT-001: 備品マスタ管理 + DBスキーマ基盤
+
+### 責務
+- DBスキーマの設計・マイグレーション（備品テーブル・貸出記録テーブル）
+- 備品マスタのCRUD（登録・編集・削除・一覧表示）
+- 備品詳細ページ（QRコード表示含む）の基盤構築
+
+### 担当ユーザーストーリー
+- US-001: 備品の新規登録
+- US-002: 備品の編集・削除
+- US-003: 備品一覧の確認（貸出状況表示は除く）
+- US-004: QRコードの発行・表示
+
+### 前提条件
+- なし（最初のUnit）
+
+---
+
+## UNIT-002: 貸出・返却操作（QRコードスキャン）
+
+### 責務
+- QRコードスキャン機能の実装（スマートフォンカメラ連携）
+- 貸出記録の作成（借り手名・返却予定日入力）
+- 返却記録の作成
+- 備品ステータスの更新（利用可能/貸出中の切り替え）
+
+### 担当ユーザーストーリー
+- US-005: QRコードスキャンによる貸出
+- US-006: QRコードスキャンによる返却
+
+### 前提条件
+- UNIT-001が完了していること（DBスキーマ・備品マスタが存在すること）
+
+---
+
+## UNIT-003: 貸出状況・履歴確認 + アラート
+
+### 責務
+- 全備品の貸出状況一覧表示
+- 返却期限アラート（超過：赤、間近：黄）のUI実装
+- 貸出履歴の一覧表示（全備品・備品ごと）
+
+### 担当ユーザーストーリー
+- US-007: 貸出状況の一覧確認
+- US-008: 貸出履歴の確認
+
+### 前提条件
+- UNIT-001・UNIT-002が完了していること（貸出データが存在すること）
+
+---
+
+## 実施順序
+
+```
+UNIT-001 → UNIT-002 → UNIT-003
+```
+
+- [x] ストーリー一覧のレビュー完了
+- [x] 依存関係・境界の整理完了
+- [x] Unit候補の列挙と責務定義完了
+- [x] 各UnitへのUSの割り当て完了
+- [x] Unit間の並行実行可否の確認完了（今回は直列）
