@@ -1,24 +1,26 @@
-"use client";
+import { headers } from "next/headers";
 
-import QRCode from "react-qr-code";
-import { useEffect, useState } from "react";
+export async function QRCodeDisplay({ equipmentId }: { equipmentId: number }) {
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "localhost:3000";
+  const proto = headersList.get("x-forwarded-proto") ?? "http";
+  const pageUrl = `${proto}://${host}/equipment/${equipmentId}`;
 
-export function QRCodeDisplay({ equipmentId }: { equipmentId: number }) {
-  const [url, setUrl] = useState("");
-
-  useEffect(() => {
-    setUrl(`${window.location.origin}/equipment/${equipmentId}`);
-  }, [equipmentId]);
-
-  if (!url) return null;
+  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pageUrl)}`;
 
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="bg-white p-4 rounded-lg border border-border">
-        <QRCode value={url} size={200} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={qrApiUrl}
+          alt="QR Code"
+          width={200}
+          height={200}
+        />
       </div>
       <p className="text-xs text-muted-foreground break-all text-center max-w-[240px]">
-        {url}
+        {pageUrl}
       </p>
     </div>
   );
