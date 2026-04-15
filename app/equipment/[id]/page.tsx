@@ -21,10 +21,13 @@ function getDefaultReturnDate(defaultReturnDays: number | null): string {
 
 export default async function EquipmentDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const { id: rawId } = await params;
+  const { error } = await searchParams;
   const id = parseInt(rawId);
   if (isNaN(id)) notFound();
 
@@ -55,6 +58,17 @@ export default async function EquipmentDetailPage({
     const returnDueAtStr = formData.get("return_due_at") as string;
 
     if (!borrowerName) return;
+
+    // 同一人物がすでに別の備品を借りていないかチェック
+    const existing = await db
+      .select({ id: loans.id })
+      .from(loans)
+      .where(and(eq(loans.borrowerName, borrowerName), isNull(loans.returnedAt)))
+      .limit(1);
+
+    if (existing.length > 0) {
+      redirect(`/equipment/${id}?error=already_borrowed`);
+    }
 
     await db.insert(loans).values({
       equipmentId: id,
@@ -132,6 +146,11 @@ export default async function EquipmentDetailPage({
               <CardTitle className="text-base">貸出する</CardTitle>
             </CardHeader>
             <CardContent>
+              {error === "already_borrowed" && (
+                <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  この方はすでに別の備品を借りています。返却してからお借りください。
+                </div>
+              )}
               <form action={lendEquipment} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="borrower_name">借り手名 *</Label>
