@@ -29,10 +29,10 @@ export default async function EquipmentDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; success?: string }>;
 }) {
   const { id: rawId } = await params;
-  const { error } = await searchParams;
+  const { error, success } = await searchParams;
   const id = parseInt(rawId);
   if (isNaN(id)) notFound();
 
@@ -114,7 +114,7 @@ export default async function EquipmentDetailPage({
 
     revalidatePath(`/equipment/${id}`);
     revalidatePath("/equipment");
-    redirect(`/equipment/${id}`);
+    redirect(`/equipment/${id}?success=date_updated`);
   }
 
   const defaultReturnDate = getDefaultReturnDate(item.defaultReturnDays);
@@ -239,6 +239,11 @@ export default async function EquipmentDetailPage({
                       変更
                     </button>
                   </div>
+                  {success === "date_updated" && (
+                    <p className="text-sm text-green-700 font-medium">
+                      ✓ 返却予定日を変更しました
+                    </p>
+                  )}
                 </form>
 
                 <form action={returnEquipment}>
