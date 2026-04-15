@@ -29,7 +29,15 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-          <nav className="border-b bg-background px-4 py-3">
+          {/* 背景画像 */}
+          <div
+            className="fixed inset-0 -z-10 bg-cover bg-center bg-fixed"
+            style={{ backgroundImage: "url('/bg.jpg')" }}
+          />
+          {/* 読みやすくするための白半透明オーバーレイ */}
+          <div className="fixed inset-0 -z-10 bg-white/60" />
+
+          <nav className="border-b bg-white/80 backdrop-blur-sm px-4 py-3">
             <div className="max-w-2xl mx-auto flex gap-5 flex-wrap">
               <Link href="/equipment" className="text-sm font-medium hover:underline">
                 備品一覧

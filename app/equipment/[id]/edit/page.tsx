@@ -67,7 +67,7 @@ export default async function EditEquipmentPage({
   }
 
   return (
-    <div className="min-h-full bg-muted/40 px-4 py-8">
+    <div className="min-h-full bg-white/30 px-4 py-8">
       <div className="max-w-md mx-auto space-y-6">
         <div>
           <Link

@@ -35,7 +35,7 @@ export default async function Page() {
   }
 
   return (
-    <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-muted/40 px-4 py-16">
+    <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-white/30 px-4 py-16">
       <Card className="w-full max-w-md shadow-md">
         <CardHeader>
           <CardTitle>Comments</CardTitle>

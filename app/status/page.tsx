@@ -70,7 +70,7 @@ export default async function StatusPage() {
   ).length;
 
   return (
-    <div className="min-h-full bg-muted/40 px-4 py-8">
+    <div className="min-h-full bg-white/30 px-4 py-8">
       <div className="max-w-2xl mx-auto space-y-6">
         <h1 className="text-2xl font-bold">貸出状況</h1>
 
