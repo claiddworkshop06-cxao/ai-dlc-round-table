@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { eq, isNull, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -97,9 +97,12 @@ export default async function EquipmentDetailPage({
             </Link>
             <h1 className="text-2xl font-bold mt-2">{item.name}</h1>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/equipment/${id}/edit`}>編集</Link>
-          </Button>
+          <Link
+            href={`/equipment/${id}/edit`}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            編集
+          </Link>
         </div>
 
         {item.description && (

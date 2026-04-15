@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { isNull } from "drizzle-orm";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { equipment, loans } from "@/src/schema";
 
@@ -39,9 +39,9 @@ export default async function EquipmentListPage() {
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">備品一覧</h1>
-          <Button asChild>
-            <Link href="/equipment/new">+ 新規登録</Link>
-          </Button>
+          <Link href="/equipment/new" className={buttonVariants()}>
+            + 新規登録
+          </Link>
         </div>
 
         {equipmentList.length === 0 ? (
@@ -92,9 +92,12 @@ export default async function EquipmentListPage() {
                       >
                         {badgeLabel}
                       </span>
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/equipment/${item.id}`}>詳細</Link>
-                      </Button>
+                      <Link
+                        href={`/equipment/${item.id}`}
+                        className={buttonVariants({ variant: "outline", size: "sm" })}
+                      >
+                        詳細
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { isNull } from "drizzle-orm";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { equipment, loans } from "@/src/schema";
 
 export const dynamic = "force-dynamic";
@@ -139,9 +139,12 @@ export default async function StatusPage() {
                       </p>
                     )}
                   </div>
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`/equipment/${item.id}`}>操作</Link>
-                  </Button>
+                  <Link
+                    href={`/equipment/${item.id}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                  >
+                    操作
+                  </Link>
                 </CardContent>
               </Card>
             ))}
@@ -162,9 +165,12 @@ export default async function StatusPage() {
                     <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">
                       利用可能
                     </span>
-                    <Button asChild variant="outline" size="sm">
-                      <Link href={`/equipment/${item.id}`}>詳細</Link>
-                    </Button>
+                    <Link
+                      href={`/equipment/${item.id}`}
+                      className={buttonVariants({ variant: "outline", size: "sm" })}
+                    >
+                      詳細
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
