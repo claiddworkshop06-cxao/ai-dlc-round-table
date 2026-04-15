@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { isNull } from "drizzle-orm";
-import { buttonVariants } from "@/components/ui/button";
+import { eq, isNull } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { equipment, loans } from "@/src/schema";
 
@@ -33,6 +34,17 @@ export default async function EquipmentListPage() {
     .where(isNull(loans.returnedAt));
 
   const activeLoanMap = new Map(activeLoans.map((l) => [l.equipmentId, l]));
+
+  async function returnFromList(formData: FormData) {
+    "use server";
+    const { db } = await import("@/src/db");
+    const loanId = parseInt(formData.get("loan_id") as string);
+    await db
+      .update(loans)
+      .set({ returnedAt: new Date() })
+      .where(eq(loans.id, loanId));
+    revalidatePath("/equipment");
+  }
 
   return (
     <div className="min-h-full bg-muted/40 px-4 py-8">
@@ -77,21 +89,46 @@ export default async function EquipmentListPage() {
 
               return (
                 <Card key={item.id}>
-                  <CardContent className="flex items-center justify-between py-4">
-                    <div>
-                      <p className="font-medium">{item.name}</p>
-                      {item.description && (
-                        <p className="text-sm text-muted-foreground">
-                          {item.description}
+                  <CardContent className="py-4 flex items-center justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium">{item.name}</p>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${badgeClass}`}
+                        >
+                          {badgeLabel}
+                        </span>
+                      </div>
+                      {!isAvailable && activeLoan && (
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          借り手: {activeLoan.borrowerName}
+                          {activeLoan.returnDueAt && (
+                            <> ／ 返却予定: {activeLoan.returnDueAt.toLocaleDateString("ja-JP")}</>
+                          )}
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full font-medium ${badgeClass}`}
-                      >
-                        {badgeLabel}
-                      </span>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {isAvailable ? (
+                        <Link
+                          href={`/equipment/${item.id}`}
+                          className={buttonVariants({ size: "sm" })}
+                        >
+                          借りる
+                        </Link>
+                      ) : (
+                        <form action={returnFromList}>
+                          <input
+                            type="hidden"
+                            name="loan_id"
+                            value={activeLoan!.id}
+                          />
+                          <Button type="submit" size="sm">
+                            返却する
+                          </Button>
+                        </form>
+                      )}
                       <Link
                         href={`/equipment/${item.id}`}
                         className={buttonVariants({ variant: "outline", size: "sm" })}
