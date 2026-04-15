@@ -218,20 +218,26 @@ export default async function EquipmentDetailPage({
 
                 <form action={updateReturnDate} className="space-y-2">
                   <input type="hidden" name="loan_id" value={activeLoan.id} />
-                  <Label htmlFor="return_due_at_edit" className="text-orange-800">
+                  <label
+                    htmlFor="return_due_at_edit"
+                    className="text-sm font-medium text-orange-800"
+                  >
                     返却予定日
-                  </Label>
+                  </label>
                   <div className="flex gap-2">
-                    <Input
+                    <input
                       id="return_due_at_edit"
                       name="return_due_at"
                       type="date"
                       defaultValue={formatDateForInput(activeLoan.returnDueAt)}
-                      className="bg-white"
+                      className="h-8 w-full min-w-0 rounded-lg border border-input bg-white px-2.5 py-1 text-sm outline-none focus-visible:border-ring"
                     />
-                    <Button type="submit" variant="outline" size="sm" className="shrink-0">
+                    <button
+                      type="submit"
+                      className={`${buttonVariants({ variant: "outline", size: "sm" })} shrink-0`}
+                    >
                       変更
-                    </Button>
+                    </button>
                   </div>
                 </form>
 
