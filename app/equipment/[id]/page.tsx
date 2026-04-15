@@ -19,6 +19,11 @@ function getDefaultReturnDate(defaultReturnDays: number | null): string {
   return date.toISOString().split("T")[0];
 }
 
+function formatDateForInput(date: Date | null): string {
+  if (!date) return "";
+  return date.toISOString().split("T")[0];
+}
+
 export default async function EquipmentDetailPage({
   params,
   searchParams,
@@ -89,6 +94,22 @@ export default async function EquipmentDetailPage({
     await db
       .update(loans)
       .set({ returnedAt: new Date() })
+      .where(eq(loans.id, loanId));
+
+    revalidatePath(`/equipment/${id}`);
+    revalidatePath("/equipment");
+    redirect(`/equipment/${id}`);
+  }
+
+  async function updateReturnDate(formData: FormData) {
+    "use server";
+    const { db } = await import("@/src/db");
+    const loanId = parseInt(formData.get("loan_id") as string);
+    const returnDueAtStr = formData.get("return_due_at") as string;
+
+    await db
+      .update(loans)
+      .set({ returnDueAt: returnDueAtStr ? new Date(returnDueAtStr) : null })
       .where(eq(loans.id, loanId));
 
     revalidatePath(`/equipment/${id}`);
@@ -181,7 +202,7 @@ export default async function EquipmentDetailPage({
         ) : (
           activeLoan && (
             <Card className="border-orange-200 bg-orange-50">
-              <CardContent className="py-4 space-y-3">
+              <CardContent className="py-4 space-y-4">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-orange-800">
                     現在の貸出情報
@@ -193,13 +214,27 @@ export default async function EquipmentDetailPage({
                     貸出日:{" "}
                     {activeLoan.borrowedAt.toLocaleDateString("ja-JP")}
                   </p>
-                  {activeLoan.returnDueAt && (
-                    <p className="text-sm text-orange-700">
-                      返却予定:{" "}
-                      {activeLoan.returnDueAt.toLocaleDateString("ja-JP")}
-                    </p>
-                  )}
                 </div>
+
+                <form action={updateReturnDate} className="space-y-2">
+                  <input type="hidden" name="loan_id" value={activeLoan.id} />
+                  <Label htmlFor="return_due_at_edit" className="text-orange-800">
+                    返却予定日
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="return_due_at_edit"
+                      name="return_due_at"
+                      type="date"
+                      defaultValue={formatDateForInput(activeLoan.returnDueAt)}
+                      className="bg-white"
+                    />
+                    <Button type="submit" variant="outline" size="sm" className="shrink-0">
+                      変更
+                    </Button>
+                  </div>
+                </form>
+
                 <form action={returnEquipment}>
                   <input
                     type="hidden"
